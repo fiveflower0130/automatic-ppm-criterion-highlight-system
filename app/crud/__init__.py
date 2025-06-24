@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+"""
+# app/crud/__init__.py
+CRUD 操作模組初始化
+"""
 from .drill import *
 from .feedback import *
 from .user import *
