@@ -1,0 +1,73 @@
+from app.models import mysql_models as models 
+from app.schemas import feedback as schemas
+from sqlalchemy.orm import Session
+
+# CRUD 操作：FeedbackRecord 相關資料表
+async def update_drill_feedback_info(db: Session, search_items: schemas.SearchFeedback, update_feedback: str):
+    result = False
+    data = db.query(models.DrillInfo).\
+        filter(
+            models.DrillInfo.lot_number == search_items["lot_number"], 
+            models.DrillInfo.drill_machine_name == search_items["drill_machine_name"],
+            models.DrillInfo.drill_spindle_id == search_items["drill_spindle_id"],
+            models.DrillInfo.drill_time == search_items["drill_time"]
+        ).first()
+
+    if data:
+        setattr(data, "feedback_result", update_feedback)
+        db.commit()
+        db.flush()
+        db.refresh(data)
+        result = True
+    return result
+
+async def create_feedback_record(db: Session, record_info: schemas.FeedbackRecord):
+    print(record_info)
+    db_feedback_record_info = models.FeedbackRecord(**record_info)
+    db.add(db_feedback_record_info)
+    db.commit()
+    db.refresh(db_feedback_record_info)
+    return db_feedback_record_info
+
+async def get_feedback_record(db: Session, search_items: schemas.SearchFeedback):
+    data = db.query(models.FeedbackRecord.employee_id, models.FeedbackRecord.result, models.FeedbackRecord.comment, models.FeedbackRecord.update_time).\
+        filter(
+            models.FeedbackRecord.lot_number == search_items["lot_number"], 
+            models.FeedbackRecord.drill_machine_name == search_items["drill_machine_name"],
+            models.FeedbackRecord.drill_spindle_id == search_items["drill_spindle_id"],
+            models.FeedbackRecord.drill_time == search_items["drill_time"]
+        ).all()
+    return data
+
+async def update_feedback_record(db: Session, update_items: schemas.FeedbackRecord):
+    result = False
+    data = db.query(models.FeedbackRecord).\
+        filter(
+            models.FeedbackRecord.lot_number == update_items["lot_number"], 
+            models.FeedbackRecord.drill_machine_name == update_items["drill_machine_name"],
+            models.FeedbackRecord.drill_spindle_id == update_items["drill_spindle_id"],
+            models.FeedbackRecord.drill_time == update_items["drill_time"],
+            models.FeedbackRecord.employee_id == update_items["employee_id"]
+        ).first()
+
+    if data:
+        update_dict = update_items
+        for key, value in update_dict.items():
+            setattr(data, key, value)
+        db.commit()
+        db.flush()
+        db.refresh(data)
+        result = True
+    return result
+
+async def del_feedback_record(db: Session, search_items: schemas.SearchFeedback):
+    data = db.query(models.FeedbackRecord).\
+        filter(
+            models.FeedbackRecord.lot_number == search_items["lot_number"], 
+            models.FeedbackRecord.drill_machine_name == search_items["drill_machine_name"],
+            models.FeedbackRecord.drill_spindle_id == search_items["drill_spindle_id"],
+            models.FeedbackRecord.drill_time == search_items["drill_time"],
+            models.FeedbackRecord.employee_id == search_items["employee_id"]
+        ).delete()
+    db.commit()
+    return data
