@@ -16,14 +16,6 @@ class DrillFeedback(BaseModel):
     drill_time: datetime
     feedback_result: str
 
-class UserModificationRecord(BaseModel):
-    employee_id: str
-    sql_command: str
-    update_time: Optional[datetime] = None
-
-    class Config:
-        orm_mode = True
-
 class FeedbackRecord(BaseModel):
     product_name: str
     lot_number: str
