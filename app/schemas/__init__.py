@@ -1,5 +1,5 @@
-from .drill_schemas import DrillInfo, SearchDrill, SearchFailrate, DrillReport, ReportUpdate
-from .feedback_schemas import SearchFeedback, DrillFeedback, UserModificationRecord, FeedbackRecord
-from .limit_schemas import PPMCriteriaLimitInfo, PPMARLimitInfo
-from .mailer_schemas import MailInfo, EEInfo
-from .predcition_schemas import PredictionRecord
+from .drill import DrillInfo, SearchDrill, SearchFailrate, DrillReport, ReportUpdate
+from .feedback import SearchFeedback, DrillFeedback, UserModificationRecord, FeedbackRecord
+from .ppm import PPMCriteriaLimitInfo, PPMARLimitInfo
+from .mail import MailInfo, EEInfo
+from .predcition import PredictionRecord
