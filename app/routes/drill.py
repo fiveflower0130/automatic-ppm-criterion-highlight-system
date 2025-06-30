@@ -19,6 +19,13 @@ router = APIRouter()
 async def get_drill_judge_result(
     start_time: datetime.datetime, end_time: datetime.datetime, db: Session = Depends(get_mysql_db)
 ):
+    """取得鑽孔機鑽孔結果\n
+    Args: \n
+        start_time: 開始時間, 格式為YYYY-MM-DD HH:MM:SS
+        end_time: 結束時間, 格式為YYYY-MM-DD HH:MM:SS
+    Response: \n
+        Object:{code: 執行結果(0是success, 1是fail), error: 錯誤訊息, data: [內容]}
+    """
     if start_time and not end_time:
         raise HTTPException(status_code=422, detail="end_time could not be empty")
     if end_time and not start_time:
@@ -31,6 +38,22 @@ async def get_drill_judge_result(
 
 @router.put("/api/drill/report", response_model=Response)
 async def update_drill_report_info(body: schemas.DrillReport, db: Session = Depends(get_mysql_db)):
+    """更新資料庫內OP通報EE狀態、備註、時間\n
+    Args: \n
+        body: {
+            lot_number: 批號,
+            machine_id: 鑽孔機ID,
+            spindle_id: 軸別ID,
+            aoi_time: 測量時間,
+            image_path?: 機鑽圖片路徑,
+            image_update_time?: 機鑽圖片路徑上傳時間,
+            contact_person?: OP通報EE,
+            contact_time?: OP通報時間
+            comment?: OP備註
+        }
+    Response: \n
+        Object:{code: 執行結果(0是success, 1是fail), error: 錯誤訊息, data: [{內容}]}
+    """
     if not body.lot_number:
         return resp("lot number could not be empty!")
     if not body.machine_id:
@@ -64,6 +87,16 @@ async def get_drill_failrate_info(
     drill_machine_name: str = None,
     db: Session = Depends(get_mysql_db)
 ):
+    """取得鑽孔機失效率資訊\n
+    Args: \n
+        start_time: 開始時間, 格式為YYYY-MM-DD HH:MM:SS
+        end_time: 結束時間, 格式為YYYY-MM-DD HH:MM:SS
+        freq_type: 時間頻率類型, 可選值為"day", "week", "month"
+        drill_machine_name: 鑽孔機名稱, 可選
+    Response: \n
+        Object:{code: 執行結果(0是success, 1是fail), error: 錯誤訊息, data: [{內容}]}
+    """
+    resp = Response()
     if not start_time:
         return resp("Start time could not be empty!")
     if not transfer.validate_datetime_format(start_time):
