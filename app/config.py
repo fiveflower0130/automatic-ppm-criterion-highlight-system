@@ -39,3 +39,7 @@ class Config:
 
     # SOAP 設定
     SOAP_URL = os.getenv("SOAP_URL", "http://10.12.20.216/mtlserviceproxy/serviceproxy.asmx")
+
+    # AI Prediction Service 設定
+    AI_SERVICE_HOST = os.getenv("AI_SERVICE_HOST", "192.168.0.107")
+    AI_SERVICE_PORT = os.getenv("AI_SERVICE_PORT", "8009")

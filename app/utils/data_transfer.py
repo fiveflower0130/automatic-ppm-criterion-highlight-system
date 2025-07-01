@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 from app.utils.logger import Logger
 from app.config import Config
-from app.services.soap import SOAPService
+from app.services.soap_service import SOAPService
 
 class Singleton:
     """單例模式基類"""
