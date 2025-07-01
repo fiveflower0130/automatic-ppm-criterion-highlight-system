@@ -1,27 +1,31 @@
 from app.models import mssql_models as models 
 from sqlalchemy.orm import Session
 from sqlalchemy import select, desc
+from typing import List, Optional
 
-def get_board_info_count(db: Session):
+def get_board_info_count(db: Session) -> int:
     stmt = select(models.BoardInfo).filter(models.BoardInfo.AOITime !="")
     result = db.execute(stmt)
     count = len(result.scalars().all())
     return count
 
-def get_board_info(db: Session, boardInfo_id: int):
+def get_board_info(db: Session, boardInfo_id: int) -> Optional[models.BoardInfo]:
     stmt = select(models.BoardInfo).filter(models.BoardInfo.ID_B == boardInfo_id)
     result = db.execute(stmt)
     data = result.scalars().first()
     return data
 
-def get_boards_info(db: Session, skip: int, limit: int):
-    stmt = select(models.BoardInfo).filter(models.BoardInfo.AOITime != "")
+def get_boards_info(db: Session, skip: int = 0, limit: int = 100) -> List[models.BoardInfo]:
+    # stmt = select(models.BoardInfo).filter(models.BoardInfo.AOITime != "")
+    # result = db.execute(stmt)
+    # data = result.scalars().all()
+    # return data[skip:limit]
+    stmt = select(models.BoardInfo).offset(skip).limit(limit)
     result = db.execute(stmt)
-    data = result.scalars().all()
-    return data[skip:limit]
+    return result.scalars().all()
     
 
-def get_board_info_by_first_aoitime(db: Session):
+def get_board_info_by_first_aoitime(db: Session) -> Optional[models.BoardInfo]:
     stmt = select(models.BoardInfo).filter(
         models.BoardInfo.Lot != "",
         models.BoardInfo.AOITime != ""
@@ -30,7 +34,7 @@ def get_board_info_by_first_aoitime(db: Session):
     data = result.scalars().first()
     return data
 
-def get_board_info_by_last_aoitime(db: Session):
+def get_board_info_by_last_aoitime(db: Session) -> Optional[models.BoardInfo]:
     stmt = select(models.BoardInfo).filter(
         models.BoardInfo.Lot != "",
         models.BoardInfo.AOITime != "",
@@ -40,7 +44,7 @@ def get_board_info_by_last_aoitime(db: Session):
     data = result.scalars().first()
     return data
 
-def get_boards_info_by_datetime(db: Session, start_time:str):
+def get_boards_info_by_datetime(db: Session, start_time:str) -> List[models.BoardInfo]:
     stmt = select(models.BoardInfo).filter(
         models.BoardInfo.Lot != "",
         models.BoardInfo.AOITime > start_time,
@@ -50,11 +54,14 @@ def get_boards_info_by_datetime(db: Session, start_time:str):
     data = result.scalars().all()
     return data
 
-def get_boards_info_by_limit(db: Session, skip: int, limit: int):
-    stmt = select(models.BoardInfo).filter(models.BoardInfo.AOITime != "")
+def get_boards_info_by_limit(db: Session, skip: int, limit: int) -> List[models.BoardInfo]:
+    # stmt = select(models.BoardInfo).filter(models.BoardInfo.AOITime != "")
+    # result = db.execute(stmt)
+    # data = result.scalars().all()
+    # return data[skip:limit]
+    stmt = select(models.BoardInfo).offset(skip).limit(limit)
     result = db.execute(stmt)
-    data = result.scalars().all()
-    return data[skip:limit]
+    return result.scalars().all()
 
 def get_measure_info(db: Session, board_id: int):
     stmt = select(models.MeasureInfo).filter(
