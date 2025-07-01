@@ -96,7 +96,7 @@ async def get_drill_failrate_info(
     Response: \n
         Object:{code: 執行結果(0是success, 1是fail), error: 錯誤訊息, data: [{內容}]}
     """
-    resp = Response()
+    
     if not start_time:
         return resp("Start time could not be empty!")
     if not transfer.validate_datetime_format(start_time):
