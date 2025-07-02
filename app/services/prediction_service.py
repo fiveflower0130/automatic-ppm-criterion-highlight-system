@@ -42,7 +42,8 @@ async def get_ai_classification(img_src: str, product_name: str, auth=None) -> d
                 "distance": None,
                 "error": str(e)
             }
-        
+# import datetime
+# import asyncio    
 # start_time = datetime.datetime.now()
 # test_img_path = 'C:\\Users\\k09857\\Desktop\\AI Services Center\\ai_service_center\\app\\ai_modules\\drill_map_ai\\data_model\\inference\\20241106132700ND11SP2L241025063Target.jpg'
 # product_name = '1166 111 A002G REV.A'
