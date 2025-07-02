@@ -1,7 +1,7 @@
 import json
 import datetime
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.encoders import jsonable_encoder
 from typing import Optional
 from app.utils.response_helper import resp
@@ -19,7 +19,7 @@ router = APIRouter()
 async def get_ppm_criteria_limit_info(
     start_time: Optional[datetime.datetime]=None,
     end_time: Optional[datetime.datetime]=None,
-    db: Session = Depends(get_mysql_db)
+    db: AsyncSession = Depends(get_mysql_db)
 ):
     try:
         if start_time and end_time:
@@ -39,7 +39,7 @@ async def get_ppm_criteria_limit_info(
         return resp(str(err))
 
 @router.post("/api/drill/criteria", response_model=Response)
-async def add_ppm_criteria_limit_info(body: schemas.PPMCriteriaLimitInfo, db: Session = Depends(get_mysql_db)):
+async def add_ppm_criteria_limit_info(body: schemas.PPMCriteriaLimitInfo, db: AsyncSession = Depends(get_mysql_db)):
     if not body.product_name:
         return resp("Product Name could not be empty!")
     if not body.ar:
@@ -70,7 +70,7 @@ async def add_ppm_criteria_limit_info(body: schemas.PPMCriteriaLimitInfo, db: Se
         return resp(str(err))
 
 @router.patch("/api/drill/criteria", response_model=Response)
-async def update_ppm_criteria_limit_info(body: schemas.PPMCriteriaLimitInfo, db: Session = Depends(get_mysql_db)):
+async def update_ppm_criteria_limit_info(body: schemas.PPMCriteriaLimitInfo, db: AsyncSession = Depends(get_mysql_db)):
     if not body.product_name:
         return resp("Product Name could not be empty!")
     if not body.update_time:
@@ -93,7 +93,7 @@ async def update_ppm_criteria_limit_info(body: schemas.PPMCriteriaLimitInfo, db:
         return resp(str(err))
 
 @router.delete("/api/drill/criteria", response_model=Response)
-async def del_ppm_criteria_limit_info(product_name: str, db: Session = Depends(get_mysql_db)):
+async def del_ppm_criteria_limit_info(product_name: str, db: AsyncSession = Depends(get_mysql_db)):
     if not product_name:
         raise HTTPException(status_code=422, detail="Product Name could not be empty")
     result = await crud.del_ppm_criteria_limit_info(db, product_name)
@@ -104,7 +104,7 @@ async def del_ppm_criteria_limit_info(product_name: str, db: Session = Depends(g
     return resp(None, data)
 
 @router.get("/api/drill/arlimit", response_model=Response)
-async def get_ppm_ar_limit_info(ar_level: str, db: Session = Depends(get_mysql_db)):
+async def get_ppm_ar_limit_info(ar_level: str, db: AsyncSession = Depends(get_mysql_db)):
     try:
         if not ar_level:
             key = f"mysql.k9.drill.arlimit"
@@ -123,7 +123,7 @@ async def get_ppm_ar_limit_info(ar_level: str, db: Session = Depends(get_mysql_d
         return resp(str(err))
 
 @router.post("/api/drill/arlimit", response_model=Response)
-async def update_ppm_ar_limit_info(body: dict, db: Session = Depends(get_mysql_db)):
+async def update_ppm_ar_limit_info(body: dict, db: AsyncSession = Depends(get_mysql_db)):
     if not body.get("update_data"):
         return resp("AR Level limit data could not be empty!")
     try:

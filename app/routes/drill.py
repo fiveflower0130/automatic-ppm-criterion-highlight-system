@@ -1,7 +1,7 @@
 import json
 import datetime
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.encoders import jsonable_encoder
 from typing import Optional
 from app.utils.response_helper import resp
@@ -17,7 +17,7 @@ router = APIRouter()
 
 @router.get("/api/drill/judge", response_model=Response)
 async def get_drill_judge_result(
-    start_time: datetime.datetime, end_time: datetime.datetime, db: Session = Depends(get_mysql_db)
+    start_time: datetime.datetime, end_time: datetime.datetime, db: AsyncSession = Depends(get_mysql_db)
 ):
     """取得鑽孔機鑽孔結果\n
     Args: \n
@@ -37,7 +37,7 @@ async def get_drill_judge_result(
         return resp(str(err))
 
 @router.put("/api/drill/report", response_model=Response)
-async def update_drill_report_info(body: schemas.DrillReport, db: Session = Depends(get_mysql_db)):
+async def update_drill_report_info(body: schemas.DrillReport, db: AsyncSession = Depends(get_mysql_db)):
     """更新資料庫內OP通報EE狀態、備註、時間\n
     Args: \n
         body: {
@@ -85,7 +85,7 @@ async def get_drill_failrate_info(
     end_time: str,
     freq_type: str,
     drill_machine_name: str = None,
-    db: Session = Depends(get_mysql_db)
+    db: AsyncSession = Depends(get_mysql_db)
 ):
     """取得鑽孔機失效率資訊\n
     Args: \n

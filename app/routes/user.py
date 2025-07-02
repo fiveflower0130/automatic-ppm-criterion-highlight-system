@@ -1,7 +1,7 @@
 import json
 import datetime
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.encoders import jsonable_encoder
 from typing import Optional
 from app.utils.response_helper import resp
@@ -17,7 +17,7 @@ router = APIRouter()
 async def get_user_modification_record(
     start_time: Optional[datetime.datetime]=None,
     end_time: Optional[datetime.datetime]=None,
-    db: Session = Depends(get_mysql_db)
+    db: AsyncSession = Depends(get_mysql_db)
 ):
     try:
         key = f"mysql.k9.drill.modification.{start_time}.{end_time}" if (start_time and end_time) else f"mysql.k9.drill.modification"
@@ -35,7 +35,7 @@ async def get_user_modification_record(
         return resp(str(err))
 
 @router.post("/api/drill/modification", response_model=Response)
-async def add_user_modification_record(body: schemas.UserModificationRecord, db: Session = Depends(get_mysql_db)):
+async def add_user_modification_record(body: schemas.UserModificationRecord, db: AsyncSession = Depends(get_mysql_db)):
     if not body.employee_id:
         return resp("Employee ID could not be empty!")
     if not body.sql_command:

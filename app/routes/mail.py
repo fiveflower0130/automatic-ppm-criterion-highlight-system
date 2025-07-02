@@ -1,6 +1,6 @@
 import json
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.encoders import jsonable_encoder
 from app.utils.response_helper import resp
 from app.utils.redis_helper import get_cache, set_cache, exists_cache
@@ -12,7 +12,7 @@ from app.schemas import mail as schemas
 router = APIRouter()
 
 @router.get("/api/drill/mail", response_model=Response)
-async def get_mail_list(db: Session = Depends(get_mysql_db)):
+async def get_mail_list(db: AsyncSession = Depends(get_mysql_db)):
     key = "mysql.k9.drill.maillist"
     try:
         if await exists_cache(key):
@@ -27,7 +27,7 @@ async def get_mail_list(db: Session = Depends(get_mysql_db)):
         return resp(str(err))
 
 @router.get("/api/drill/eelist", response_model=Response)
-async def get_ee_list(db: Session = Depends(get_mysql_db)):
+async def get_ee_list(db: AsyncSession = Depends(get_mysql_db)):
     key = "mysql.k9.drill.eelist"
     try:
         if await exists_cache(key):
@@ -41,7 +41,7 @@ async def get_ee_list(db: Session = Depends(get_mysql_db)):
         return resp(str(err))
 
 @router.post("/api/drill/mail", response_model=Response)
-async def add_email_info(body: schemas.MailInfo, db: Session = Depends(get_mysql_db)):
+async def add_email_info(body: schemas.MailInfo, db: AsyncSession = Depends(get_mysql_db)):
     if not body.email:
         return resp("email could not be empty!")
     if not body.send_type:
@@ -59,7 +59,7 @@ async def add_email_info(body: schemas.MailInfo, db: Session = Depends(get_mysql
         return resp(str(err))
 
 @router.post("/api/drill/eelist", response_model=Response)
-async def add_ee_info(body: schemas.EEInfo, db: Session = Depends(get_mysql_db)):
+async def add_ee_info(body: schemas.EEInfo, db: AsyncSession = Depends(get_mysql_db)):
     if not body.ee_id:
         return resp("EE ID could not be empty!")
     if not body.name:
@@ -77,7 +77,7 @@ async def add_ee_info(body: schemas.EEInfo, db: Session = Depends(get_mysql_db))
         return resp(str(err))
 
 @router.delete("/api/drill/mail", response_model=Response)
-async def del_mail_info(email: str, db: Session = Depends(get_mysql_db)):
+async def del_mail_info(email: str, db: AsyncSession = Depends(get_mysql_db)):
     if not email:
         raise HTTPException(status_code=422, detail="lot could not be empty")
     result = await crud.del_mail_info(db, email)
@@ -88,7 +88,7 @@ async def del_mail_info(email: str, db: Session = Depends(get_mysql_db)):
     return resp(None, data)
 
 @router.delete("/api/drill/eelist", response_model=Response)
-async def del_ee_info(ee_id: str, db: Session = Depends(get_mysql_db)):
+async def del_ee_info(ee_id: str, db: AsyncSession = Depends(get_mysql_db)):
     if not ee_id:
         raise HTTPException(status_code=422, detail="lot could not be empty")
     result = await crud.del_ee_info(db, ee_id)

@@ -1,7 +1,7 @@
 import json
 import datetime
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.utils.response_helper import resp
 from app.database.mysql import get_mysql_db 
 from app.crud import feedback as crud
@@ -12,7 +12,7 @@ router = APIRouter()
 
 
 @router.patch("/api/drill/judge", response_model=Response)
-async def update_drill_judge_feedback(body: schemas.DrillFeedback, db: Session = Depends(get_mysql_db)):
+async def update_drill_judge_feedback(body: schemas.DrillFeedback, db: AsyncSession = Depends(get_mysql_db)):
     if not body.lot_number:
         return resp("lot number could not be empty!")
     if not body.drill_machine_name:
@@ -42,7 +42,7 @@ async def get_feedback_record(
     drill_machine_name: str,
     drill_spindle_id: int,
     drill_time: datetime.datetime,
-    db: Session = Depends(get_mysql_db)
+    db: AsyncSession = Depends(get_mysql_db)
 ):
     if not lot_number:
         return resp("Lot number could not be empty!")
@@ -65,7 +65,7 @@ async def get_feedback_record(
         return resp(str(err))
 
 @router.post("/api/drill/feedback", response_model=Response)
-async def add_feedback_record(body: schemas.FeedbackRecord, db: Session = Depends(get_mysql_db)):
+async def add_feedback_record(body: schemas.FeedbackRecord, db: AsyncSession = Depends(get_mysql_db)):
     if not body.employee_id:
         return resp("Employee ID could not be empty!")
     if not body.lot_number:
@@ -82,7 +82,7 @@ async def add_feedback_record(body: schemas.FeedbackRecord, db: Session = Depend
         return resp(str(err))
 
 @router.patch("/api/drill/feedback", response_model=Response)
-async def update_feedback_record(body: schemas.FeedbackRecord, db: Session = Depends(get_mysql_db)):
+async def update_feedback_record(body: schemas.FeedbackRecord, db: AsyncSession = Depends(get_mysql_db)):
     if not body.employee_id:
         return resp("Employee ID could not be empty!")
     if not body.result:
@@ -105,7 +105,7 @@ async def del_feedback_record(
     drill_spindle_id: int,
     drill_time: datetime.datetime,
     employee_id: str,
-    db: Session = Depends(get_mysql_db)
+    db: AsyncSession = Depends(get_mysql_db)
 ):
     if not lot_number:
         return resp("Lot number could not be empty!")
