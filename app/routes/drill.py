@@ -55,13 +55,13 @@ async def update_drill_report_info(body: schemas.DrillReport, db: AsyncSession =
         Object:{code: 執行結果(0是success, 1是fail), error: 錯誤訊息, data: [{內容}]}
     """
     if not body.lot_number:
-        return resp("lot number could not be empty!")
+        raise HTTPException(status_code=422, detail="lot number could not be empty!")
     if not body.machine_id:
-        return resp("machine id could not be empty!")
+        raise HTTPException(status_code=422, detail="machine id could not be empty!")
     if not body.spindle_id:
-        return resp("spindle id could not be empty!")
+        raise HTTPException(status_code=422, detail="spindle id could not be empty!")
     if not body.aoi_time:
-        return resp("spindle id could not be empty!")
+        raise HTTPException(status_code=422, detail="aoi time could not be empty!")
     search_items = {}
     update_items = {}
     try:
@@ -98,15 +98,15 @@ async def get_drill_failrate_info(
     """
     
     if not start_time:
-        return resp("Start time could not be empty!")
+        raise HTTPException(status_code=422, detail="Start time could not be empty!")
     if not transfer.validate_datetime_format(start_time):
-        return resp("Start time format error!")
+        raise HTTPException(status_code=422, detail="Start time format error!")
     if not end_time:
-        return resp("End time could not be empty!")
+        raise HTTPException(status_code=422, detail="End time could not be empty!")
     if not transfer.validate_datetime_format(end_time):
-        return resp("End time format error!")
+        raise HTTPException(status_code=422, detail="End time format error!")
     if not freq_type or freq_type not in ["day", "week", "month"]:
-        return resp("Freq type could not be empty!")
+        raise HTTPException(status_code=422, detail="Freq type could not be empty!")
     try:
         key = f"mysql.k9.drill.failrate.{start_time}.{end_time}.{freq_type}.{drill_machine_name}"
         if await exists_cache(key):

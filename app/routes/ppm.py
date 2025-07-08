@@ -41,17 +41,17 @@ async def get_ppm_criteria_limit_info(
 @router.post("/api/drill/criteria", response_model=Response)
 async def add_ppm_criteria_limit_info(body: schemas.PPMCriteriaLimitInfo, db: AsyncSession = Depends(get_mysql_db)):
     if not body.product_name:
-        return resp("Product Name could not be empty!")
+        raise HTTPException(status_code=422, detail="Product Name could not be empty!")
     if not body.ar:
-        return resp("AR could not be empty!")
+        raise HTTPException(status_code=422, detail="AR could not be empty!")
     if not body.ar_level:
-        return resp("AR Level could not be empty!")
+        raise HTTPException(status_code=422, detail="AR Level could not be empty!")
     if not body.ppm_limit:
-        return resp("PPM Limit could not be empty!")
+        raise HTTPException(status_code=422, detail="PPM Limit could not be empty!")
     if not isinstance(body.modification, bool):
-        return resp("Modification could not be empty!")
+        raise HTTPException(status_code=422, detail="Modification could not be empty!")
     if not body.update_time:
-        return resp("Update Time could not be empty!")
+        raise HTTPException(status_code=422, detail="Update Time could not be empty!")
     try:
         ppm_criteria_limit_info = {
             "product_name": body.product_name,
@@ -72,9 +72,9 @@ async def add_ppm_criteria_limit_info(body: schemas.PPMCriteriaLimitInfo, db: As
 @router.patch("/api/drill/criteria", response_model=Response)
 async def update_ppm_criteria_limit_info(body: schemas.PPMCriteriaLimitInfo, db: AsyncSession = Depends(get_mysql_db)):
     if not body.product_name:
-        return resp("Product Name could not be empty!")
+        raise HTTPException(status_code=422, detail="Product Name could not be empty!")
     if not body.update_time:
-        return resp("Update Time could not be empty!")
+        raise HTTPException(status_code=422, detail="Update Time could not be empty!")
     update_items = {
         "product_name": body.product_name if body.product_name else None,
         "ar": body.ar if body.ar else 0,
@@ -125,7 +125,7 @@ async def get_ppm_ar_limit_info(ar_level: str, db: AsyncSession = Depends(get_my
 @router.post("/api/drill/arlimit", response_model=Response)
 async def update_ppm_ar_limit_info(body: dict, db: AsyncSession = Depends(get_mysql_db)):
     if not body.get("update_data"):
-        return resp("AR Level limit data could not be empty!")
+        raise HTTPException(status_code=422, detail="AR Level limit data could not be empty!")
     try:
         data = await crud.update_ppm_ar_limit_info(db, body["update_data"])
         ar_limit_key = "mysql.k9.drill.arlimit"

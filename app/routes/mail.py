@@ -43,9 +43,9 @@ async def get_ee_list(db: AsyncSession = Depends(get_mysql_db)):
 @router.post("/api/drill/mail", response_model=Response)
 async def add_email_info(body: schemas.MailInfo, db: AsyncSession = Depends(get_mysql_db)):
     if not body.email:
-        return resp("email could not be empty!")
+        raise HTTPException(status_code=422, detail="Email could not be empty!")
     if not body.send_type:
-        return resp("send type could not be empty!")
+        raise HTTPException(status_code=422, detail="Send type could not be empty!")
     key = "mysql.k9.drill.maillist"
     try:
         mail_info = {}
@@ -61,9 +61,10 @@ async def add_email_info(body: schemas.MailInfo, db: AsyncSession = Depends(get_
 @router.post("/api/drill/eelist", response_model=Response)
 async def add_ee_info(body: schemas.EEInfo, db: AsyncSession = Depends(get_mysql_db)):
     if not body.ee_id:
-        return resp("EE ID could not be empty!")
+        raise HTTPException(status_code=422, detail="EE ID could not be empty!")
+        # return resp("EE ID could not be empty!")
     if not body.name:
-        return resp("EE name could not be empty!")
+        raise HTTPException(status_code=422, detail="EE name could not be empty!")
     key = "mysql.k9.drill.eelist"
     try:
         ee_info = {}
@@ -79,7 +80,7 @@ async def add_ee_info(body: schemas.EEInfo, db: AsyncSession = Depends(get_mysql
 @router.delete("/api/drill/mail", response_model=Response)
 async def del_mail_info(email: str, db: AsyncSession = Depends(get_mysql_db)):
     if not email:
-        raise HTTPException(status_code=422, detail="lot could not be empty")
+        raise HTTPException(status_code=422, detail="Email could not be empty")
     result = await crud.del_mail_info(db, email)
     data = "Delete Success" if result == 1 else "Delete Fail"
     key = "mysql.k9.drill.maillist"
@@ -90,7 +91,7 @@ async def del_mail_info(email: str, db: AsyncSession = Depends(get_mysql_db)):
 @router.delete("/api/drill/eelist", response_model=Response)
 async def del_ee_info(ee_id: str, db: AsyncSession = Depends(get_mysql_db)):
     if not ee_id:
-        raise HTTPException(status_code=422, detail="lot could not be empty")
+        raise HTTPException(status_code=422, detail="EE id could not be empty")
     result = await crud.del_ee_info(db, ee_id)
     data = "Delete Success" if result == 1 else "Delete Fail"
     key = "mysql.k9.drill.eelist"

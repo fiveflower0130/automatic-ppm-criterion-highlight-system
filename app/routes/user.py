@@ -37,9 +37,9 @@ async def get_user_modification_record(
 @router.post("/api/drill/modification", response_model=Response)
 async def add_user_modification_record(body: schemas.UserModificationRecord, db: AsyncSession = Depends(get_mysql_db)):
     if not body.employee_id:
-        return resp("Employee ID could not be empty!")
+        raise HTTPException(status_code=422, detail="Employee ID could not be empty!")
     if not body.sql_command:
-        return resp("SQL command could not be empty!")
+        raise HTTPException(status_code=422, detail="SQL command could not be empty!")
     try:
         record_info = {
             "employee_id": body.employee_id,
