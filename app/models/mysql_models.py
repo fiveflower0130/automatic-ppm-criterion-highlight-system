@@ -122,8 +122,8 @@ class UserModificationRecord(mysql_base):
     sql_command = Column(String(512))
     update_time = Column(DateTime)
 
-class AIPredictionRecord(mysql_base):
-    __tablename__ = "prediction_record"
+class AIClassificationRecord(mysql_base):
+    __tablename__ = "classification_record"
     __table_args__ = {
         'mysql_engine': 'InnoDB', 
         'mysql_charset': 'utf8mb4', 
@@ -131,7 +131,7 @@ class AIPredictionRecord(mysql_base):
         'mysql_row_format': 'DYNAMIC'
     }
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    image_path = Column(String(128), index=True)
+    image_path = Column(String(190), index=True)
     product_name = Column(String(64))
     classification_code = Column(String(8))
     classification_model = Column(String(32))
