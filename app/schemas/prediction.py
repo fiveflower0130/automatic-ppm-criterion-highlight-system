@@ -1,7 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel
 
-class PredictionRecord(BaseModel):
+class ClassificationRecord(BaseModel):
     image_path: str
     product_name: str
     classification_code: str
