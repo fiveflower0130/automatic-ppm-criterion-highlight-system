@@ -69,9 +69,11 @@ class TQMProcessor:
                 
             self.logger.info(f"PPM 警告資訊已寄出 ({len(highlight_list)} 封)")
             return True
+        
         except Exception as mail_err:
             self.logger.error(f"郵件發送錯誤: {mail_err}")
             return False
+        
         finally:
             self.email_client.delete_client(host=self.email_host)
     
@@ -281,11 +283,11 @@ class TQMProcessor:
                         
                         # 4. 批次儲存資料 - 在呼叫前判斷
                         if self.config.enable_save:
-                            await self._save_batch_data(mydb, prediction_list, insert_list)
-                        
+                            save = await self._save_batch_data(mydb, prediction_list, insert_list)
+                           
                         # 5. 發送警告郵件 - 在呼叫前判斷
                         if self.config.enable_email:
-                            await self._send_alert_emails(mydb, highlight_list)
+                            send = await self._send_alert_emails(mydb, highlight_list)
 
                         # 更新開始時間
                         start_time = boards_info[-1].AOITime
