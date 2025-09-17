@@ -43,3 +43,12 @@ class Config:
     # AI Prediction Service 設定
     AI_SERVICE_HOST = os.getenv("AI_SERVICE_HOST", "192.168.0.107")
     AI_SERVICE_PORT = os.getenv("AI_SERVICE_PORT", "8009")
+
+    # Backup 設定
+    BACKUP_RETENTION_DAYS = int(os.getenv("BACKUP_RETENTION_DAYS", "7"))
+    BACKUP_SRC_PATH = os.getenv("BACKUP_SRC_PATH", "")
+    BACKUP_DEST_PATH = os.getenv("BACKUP_DEST_PATH", "D:\\drill_map_backup")
+    BACKUP_AD_ACCOUNT = os.getenv("BACKUP_AD_ACCOUNT", "")
+    BACKUP_AD_PASSWORD = os.getenv("BACKUP_AD_PASSWORD", "")
+    BACKUP_AD_DOMAIN = os.getenv("BACKUP_AD_DOMAIN", "")
+    BACKUP_RETRY_TIMES = int(os.getenv("BACKUP_RETRY_TIMES", "3"))
