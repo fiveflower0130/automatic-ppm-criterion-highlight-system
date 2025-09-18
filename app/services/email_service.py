@@ -10,12 +10,13 @@ from email.header import Header
 from typing import Dict, List
 from app.utils.logger import Logger
 
+# 取得logger實例
+logger = Logger().get_logger()
 
 class EmailClient:
     """電子郵件服務類別"""
     def __init__(self):
         self.__email_clients = {}
-        self.__logger = Logger().get_logger()
 
     def __get_client(self, host: str) -> smtplib.SMTP:
         """取得 SMTP 客戶端"""
@@ -65,9 +66,9 @@ class EmailClient:
             if user and pwd:
                 client.login(user, pwd)
             self.__email_clients[host] = client
-            self.__logger.info(f"成功新增 SMTP 客戶端: {host}")
+            logger.info(f"成功新增 SMTP 客戶端: {host}")
         except smtplib.SMTPException as error:
-            self.__logger.error(f"無法新增 SMTP 客戶端: {error}")
+            logger.error(f"無法新增 SMTP 客戶端: {error}")
 
     def send_email(self, host: str, data: Dict):
         """發送電子郵件"""
@@ -77,15 +78,15 @@ class EmailClient:
             receiver = data['to'] + data['cc'] + data['bcc']
             message = self.__get_message(data)
             email_client.sendmail(sender, receiver, message.as_string())
-            self.__logger.info("郵件已成功發送")
+            logger.info("郵件已成功發送至: " + ", ".join(receiver))
         except smtplib.SMTPException as error:
-            self.__logger.error(f"無法發送郵件: {error}")
+            logger.error(f"無法發送郵件: {error}")
 
     def delete_client(self, host: str):
         """刪除 SMTP 客戶端"""
         try:
             email_client = self.__email_clients.pop(host)
             email_client.quit()
-            self.__logger.info(f"成功刪除 SMTP 客戶端: {host}")
+            logger.info(f"成功刪除 SMTP 客戶端: {host}")
         except smtplib.SMTPException as error:
-            self.__logger.error(f"無法刪除 SMTP 客戶端: {error}")
+            logger.error(f"無法刪除 SMTP 客戶端: {error}")
