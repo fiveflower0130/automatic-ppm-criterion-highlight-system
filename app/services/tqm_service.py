@@ -142,14 +142,14 @@ class TQMProcessor:
         
         try:
             # 取得 AI 圖片路徑
-            ai_image_path = await self.transfer.get_ai_drill_img_path(
+            image_path = await self.transfer.get_ai_drill_img_path(
                 drill_info["lot_number"], drill_info["drill_machine_name"],
                 drill_info["drill_spindle_id"], drill_info["drill_time"].strftime("%Y-%m-%d %H:%M:%S")
             )
             
             # 呼叫 AI 預測服務
             ai_classification_result = await get_ai_classification(
-                img_src=ai_image_path, 
+                img_src=image_path, 
                 product_name=drill_info["product_name"]
             )
             
@@ -160,7 +160,7 @@ class TQMProcessor:
             
             # 建立預測資訊
             prediction_info = {
-                "image_path": ai_image_path,
+                "image_path": image_path,
                 "product_name": drill_info["product_name"],
                 "classification_code": ai_classification_result["classification_code"],
                 "classification_model": ai_classification_result["classification_model"],
@@ -172,7 +172,7 @@ class TQMProcessor:
             drill_info.update({
                 "classification_result": ai_classification_result["classification_code"],
                 "classification_time": classification_time,
-                "image_path": ai_image_path
+                "image_path": image_path
             })
             
             return prediction_info, drill_info
