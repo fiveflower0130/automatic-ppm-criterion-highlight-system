@@ -8,6 +8,11 @@ class SearchDrill(BaseModel):
     drill_spindle_id: Optional[int] = None
     aoi_time: Optional[datetime] = None
 
+class SearchDrillByImageInfo(BaseModel):
+    lot_number: str
+    machine_name: str
+    spindle_id: int
+
 class SearchFailrate(BaseModel):
     start_time: datetime
     end_time: datetime
