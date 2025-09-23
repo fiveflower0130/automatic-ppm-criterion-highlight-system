@@ -46,7 +46,7 @@ class Config:
 
     # Backup 設定
     BACKUP_RETENTION_DAYS = int(os.getenv("BACKUP_RETENTION_DAYS", "7"))
-    BACKUP_SRC_PATH = os.getenv("BACKUP_SRC_PATH", "")
+    BACKUP_REMOTE_PATH = os.getenv("BACKUP_REMOTE_PATH", "")
     BACKUP_DEST_PATH = os.getenv("BACKUP_DEST_PATH", "D:\\drill_map_backup")
     BACKUP_AD_ACCOUNT = os.getenv("BACKUP_AD_ACCOUNT", "")
     BACKUP_AD_PASSWORD = os.getenv("BACKUP_AD_PASSWORD", "")
