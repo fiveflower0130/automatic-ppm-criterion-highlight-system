@@ -18,6 +18,16 @@ async def get_drill_info_by_last_aoitime(db: AsyncSession):
     data = result.scalars().first()
     return data
 
+async def get_drill_info_by_image_info(db: AsyncSession, search_items: schemas.SearchDrillByImageInfo):
+    stmt = select(models.DrillInfo).filter(
+        models.DrillInfo.lot_number == search_items["lot_number"],
+        models.DrillInfo.drill_machine_name == search_items["machine_name"],
+        models.DrillInfo.drill_spindle_id == search_items["spindle_id"]
+    )
+    result = await db.execute(stmt)
+    data = result.scalars().all()
+    return data
+
 async def get_drill_info(db: AsyncSession, search_items: schemas.SearchDrill):
     if search_items["drill_machine_id"] and search_items["drill_spindle_id"] and search_items["aoi_time"]:
         data = await db.execute(
