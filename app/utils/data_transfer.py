@@ -219,7 +219,7 @@ class DataTransfer(Singleton):
         """獲取郵件數據"""
         try:
             sender = {
-                'name': 'Testing PPM Hightlight System Manager',
+                'name': 'PPM Hightlight System Manager',
                 'email': 'Testing_TID5940@aseglobal.com'
             }
             receivers = self.__get_report_receivers(mail_list)
@@ -447,6 +447,7 @@ class DataTransfer(Singleton):
             
             # 組合路徑
             result = os.path.join(drill_img_folder, drill_machine_name, img_file_name)
+            
             return result
         
         except Exception as err:
