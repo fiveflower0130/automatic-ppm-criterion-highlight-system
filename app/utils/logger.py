@@ -24,7 +24,7 @@ class Logger(Singleton):
             Logger._logger = logging.getLogger(__name__)
             Logger._logger.setLevel(log_level)
             formatter = logging.Formatter(
-                '%(asctime)s \t [%(levelname)s | %(filename)s | %(funcName)s:%(lineno)s ] -> %(message)s'
+                '%(asctime)s\t[%(levelname)s][%(filename)s|%(funcName)s:%(lineno)s]-> %(message)s'
             )
 
             # 建立日誌目錄
