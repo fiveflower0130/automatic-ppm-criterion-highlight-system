@@ -29,6 +29,13 @@ class DrillReport(BaseModel):
     contact_time: Optional[datetime] = None
     comment: Optional[str] = None
 
+class ImageUpdate(BaseModel):
+    lot_number: str
+    machine_name: str
+    spindle_id: int
+    image_path: str
+    image_update_time: datetime
+
 class ReportUpdate(BaseModel):
     image_path: Optional[str] =None
     image_update_time: Optional[datetime] = None
