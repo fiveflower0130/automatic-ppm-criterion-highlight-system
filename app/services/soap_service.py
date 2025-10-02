@@ -31,11 +31,11 @@ class SOAPService:
         except Exception as err:
             raise ValueError(f"SOAP 響應解析失敗: {err}")
 
-    async def call_soap_method(self, payload: Dict[str, Any], method: str = "GetSpecValue", result_tag: str="GetSpecValueResult") -> Dict[str, Any]:
+    def call_soap_method(self, payload: Dict[str, Any], method: str = "GetSpecValue", result_tag: str="GetSpecValueResult") -> Dict[str, Any]:
         """呼叫 SOAP 方法並回傳結果"""
         try:
             body = self._build_soap_body(method, payload)
-            response = await requests.post(self.__soap_url, data=body.encode('utf-8'), headers=self.__headers)
+            response = requests.post(self.__soap_url, data=body.encode('utf-8'), headers=self.__headers)
             response.raise_for_status()  # 檢查 HTTP 狀態碼
             return self._parse_soap_response(response, result_tag)
         except requests.RequestException as req_err:
