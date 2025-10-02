@@ -5,11 +5,14 @@ import datetime
 import win32wnet
 from win32netcon import RESOURCETYPE_DISK
 from dataclasses import dataclass
+from icecream import ic
 from typing import Optional, List, Dict, Tuple, Any
 from app.database import mysql_session
 from app.crud import drill as drill_crud, prediction as prediction_crud, mail as mail_crud
 from app.utils.data_transfer import DataTransfer
 from app.utils.logger import Logger
+
+ic.configureOutput(includeContext=False, contextAbsPath=False)
 
 # 取得logger實例
 logger = Logger().get_logger()
@@ -176,7 +179,8 @@ class BackupProcessor:
                     rel_path = os.path.relpath(root, self.connection_config.remote_path) # 計算相對路徑
                     dest_dir = os.path.join(self.connection_config.dest_path, rel_path) # 目標資料夾
                     os.makedirs(dest_dir, exist_ok=True) # 確保目標資料夾存在
-                    print(f"Processing directory: {root} -> {dest_dir}")
+                    ic_message = f"{root} -> {dest_dir}"
+                    ic("Processing directory: ", ic_message)
                     
                     for file in files:
                         self.__file_count += 1
@@ -187,7 +191,7 @@ class BackupProcessor:
                         try:
                             shutil.copy2(remote_path, dest_path)
                             self.__copied_count += 1
-                            print(f"已備份檔案: {dest_path}")
+                            ic(f"已備份檔案: {dest_path}")
                         except Exception as e:
                             logger.error(f"Failed to copy file {remote_path} to {dest_path}: {e}")
                             continue
@@ -197,7 +201,6 @@ class BackupProcessor:
 
                         # 確認檔案內容是否需要更新到資料庫
                         if not file_info:
-                            logger.warning(f"Skipping file with invalid name format: {file}")
                             continue
 
                         if file_info["target_panel"] != "Target":
@@ -208,11 +211,14 @@ class BackupProcessor:
                         search_criteria = {
                             "lot_number": file_info["lot_number"],
                             "machine_name": file_info["machine_name"],
-                            "spindle_id": int(file_info["spindle_id"])-1
+                            "spindle_id": int(file_info["spindle_id"])-1 if isinstance(file_info["spindle_id"], str) else file_info["spindle_id"]-1
                         }
-                        print("search_criteria:", search_criteria)
-                        records = await drill_crud.get_drill_info_by_image_info(mydb, search_criteria)
-                        print("records:", records)
+                        ic("search_criteria:", search_criteria)
+                        try:
+                            records = await drill_crud.get_drill_info_by_image_info(mydb, search_criteria)
+                        except Exception as e:
+                            logger.error(f"Database query failed for criteria {search_criteria}: {e}")
+                            records = []
                         if records:
                             for record in records:
                                 if not record.image_path or not record.image_update_time:
@@ -232,13 +238,14 @@ class BackupProcessor:
                                     else:
                                         logger.error(f"Failed to update DrillInfo ID {record.id}, move to the pending area")
                                         self.pending_list.append((search_drill, update_data))
-                        else:
-                            logger.info(f"No matching DrillInfo found for file: {file}, delete the backup file")
+                                else:
+                                    ic(f"DrillInfo ID {record.id} already has image_path and image_update_time, skipping update")
+                        else: 
                             # 刪除備份檔案
                             try:
+                                logger.info(f"No matching Drill Info found for file: {file}, delete the backup file: {dest_path}")
                                 os.remove(dest_path)
                                 self.__copied_count -= 1
-                                logger.info(f"Deleted backup file: {dest_path}")
                             except Exception as e:
                                 logger.error(f"Failed to delete backup file {dest_path}: {e}")
             
