@@ -1,8 +1,11 @@
 import os
 import re
 import math
+import json
 import pandas as pd
 from datetime import datetime, timedelta
+from PIL import Image
+from PIL.ExifTags import TAGS
 from collections import defaultdict
 from app.utils.logger import Logger
 from app.config import Config
@@ -61,7 +64,7 @@ class DataTransfer(Singleton):
             return {}
             
 
-    async def get_ppm_ar_value(self, lot_number:str)-> float:
+    def get_ppm_ar_value(self, lot_number:str)-> float:
         """獲取PPM的AR值"""
         try:
             soap_params = {
@@ -70,7 +73,7 @@ class DataTransfer(Singleton):
                 "SPECType": "1",
                 "InComChColumnName": "內層Annual Ring" if len(lot_number) > 10 else "外層Annual Ring"
             }
-            return await self.__soap_service.call_soap_method(soap_params)
+            return self.__soap_service.call_soap_method(soap_params)
 
         except Exception as err:
             self.__logger.error(f"get_ppm_ar_value fail: {err}")
@@ -447,9 +450,27 @@ class DataTransfer(Singleton):
             
             # 組合路徑
             result = os.path.join(drill_img_folder, drill_machine_name, img_file_name)
+            # result = os.path.join(drill_machine_name, img_file_name)
             
             return result
         
         except Exception as err:
             self.__logger.error(f"get_drill_img_path [{lot_number}, {drill_machine_name}, {drill_spindle_id}, {drill_time}] fail: {err}")
+            return None
+    
+    def get_image_update_time(self, file_path:str) -> str:
+        try:
+            with Image.open(file_path) as img:
+                print("img: ", img)
+                exif_data = img.getexif()
+                print("exif_data: ", exif_data)
+                if not exif_data: return None
+
+                exif = {TAGS.get(key, key):value for key, value in exif_data.items()}
+
+                creation_time = exif.get('DateTimeOriginal')
+                return creation_time
+            
+        except Exception as e:
+            self.__logger.error(f"Load file '{file_path}' EXIF time fail.")
             return None
