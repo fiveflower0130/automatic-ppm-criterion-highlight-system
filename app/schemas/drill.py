@@ -60,6 +60,9 @@ class DrillInfo(BaseModel):
     ratio_target : Optional[float] = -1
     image_path: Optional[str] = None
     image_update_time: Optional[datetime] = None
+    classification_result: Optional[str] = None
+    classification_time: Optional[datetime] = None
+    feedback_result: Optional[str] = None
     report_ee: Optional[str] = None
     report_time: Optional[datetime] = None
     comment: Optional[str] = None
