@@ -437,10 +437,11 @@ class DataTransfer(Singleton):
     
 
     # 20241105 新增
-    async def get_ai_drill_img_path(self, lot_number:str, drill_machine_name:str, drill_spindle_id:int, drill_time:str)->str:
+    async def get_ai_drill_img_path(self, lot_number:str, drill_machine_name:str, drill_spindle_id:int, drill_time:str)->dict[str, str]:
         """獲取AI鑽孔圖像路徑"""
         try:
-            drill_img_folder = Config.DRILL_IMG_FOLDER
+            local_drill_img_folder = Config.BACKUP_DEST_PATH
+            remote_drill_img_folder = Config.DRILL_IMG_FOLDER
             if not isinstance(drill_spindle_id, int):
                 drill_spindle_id = int(drill_spindle_id)
 
@@ -449,28 +450,55 @@ class DataTransfer(Singleton):
             img_file_name = f'{drill_time_replace}{drill_machine_name}SP{str(drill_spindle_id+1)}{lot_number}Target.jpg'
             
             # 組合路徑
-            result = os.path.join(drill_img_folder, drill_machine_name, img_file_name)
-            # result = os.path.join(drill_machine_name, img_file_name)
-            
-            return result
-        
+            remote_path = os.path.join(remote_drill_img_folder, drill_machine_name, img_file_name)
+            local_path = os.path.join(local_drill_img_folder, drill_machine_name, img_file_name)
+
+            return {"remote_path": remote_path, "local_path": local_path}
+
         except Exception as err:
             self.__logger.error(f"get_drill_img_path [{lot_number}, {drill_machine_name}, {drill_spindle_id}, {drill_time}] fail: {err}")
-            return None
+            return {"remote_path": None, "local_path": None}
     
-    def get_image_update_time(self, file_path:str) -> str:
+    def get_image_file_check(self, file_path:str)-> bool:
+        """檢查圖像檔案是否存在"""
+        try:
+            return os.path.isfile(file_path)
+        except Exception as e:
+            self.__logger.error(f"Load file '{file_path}' fail.")
+            return False
+
+    def __get_image_update_time_by_exif(self, file_path:str) -> str:
         try:
             with Image.open(file_path) as img:
-                print("img: ", img)
                 exif_data = img.getexif()
-                print("exif_data: ", exif_data)
                 if not exif_data: return None
-
                 exif = {TAGS.get(key, key):value for key, value in exif_data.items()}
-
                 creation_time = exif.get('DateTimeOriginal')
+                if creation_time:
+                    creation_time = creation_time.replace(":", "-", 2)
                 return creation_time
             
         except Exception as e:
             self.__logger.error(f"Load file '{file_path}' EXIF time fail.")
+            return None
+    
+    def __get_image_update_time_by_file(self, file_path:str) -> str:
+        try:
+            file_mtime = os.path.getmtime(file_path)
+            return datetime.fromtimestamp(file_mtime).strftime("%Y-%m-%d %H:%M:%S")  
+        except Exception as e:
+            self.__logger.error(f"Load file '{file_path}' modify time fail.")
+            return None
+    
+    def get_image_update_time(self, file_path:str) -> str:
+        """獲取圖像的更新時間"""
+        try:
+            # 嘗試從EXIF數據中獲取創建時間
+            create_time = self.__get_image_update_time_by_exif(file_path)
+            if not create_time:
+                create_time = self.__get_image_update_time_by_file(file_path)
+            return create_time
+        
+        except Exception as err:
+            self.__logger.error(f"get_image_update_time [{file_path}] fail: {err}")
             return None
