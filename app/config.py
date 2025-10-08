@@ -35,7 +35,7 @@ class Config:
     WEBSIDE_PORT = os.getenv("WEB_PORT", "5940")
 
     # Image 設定
-    DRILL_IMG_FOLDER = os.getenv("DRILL_IMG_FOLDER", "D:\\drill_map_backup")
+    DRILL_IMG_FOLDER = os.getenv("DRILL_IMG_FOLDER", "")
 
     # SOAP 設定
     SOAP_URL = os.getenv("SOAP_URL", "http://10.12.20.216/mtlserviceproxy/serviceproxy.asmx")
