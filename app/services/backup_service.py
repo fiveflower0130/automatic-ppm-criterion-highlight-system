@@ -228,9 +228,12 @@ class BackupProcessor:
                                         "drill_spindle_id": record.drill_spindle_id,
                                         "aoi_time": record.aoi_time
                                         }
+                                    
+                                    file_mtime = os.path.getmtime(dest_path)
+                                    image_update_time = datetime.datetime.fromtimestamp(file_mtime).strftime("%Y-%m-%d %H:%M:%S")
                                     update_data = {
                                         "image_path": dest_path,
-                                        "image_update_time": file_info["image_create_time"]
+                                        "image_update_time": image_update_time
                                     }
                                     if await drill_crud.update_drill_report_info(mydb, search_drill, update_data):
                                         self.__db_updated_count += 1
@@ -250,7 +253,7 @@ class BackupProcessor:
                                 logger.error(f"Failed to delete backup file {dest_path}: {e}")
             
         except Exception as e:
-            logger.error(f"備份過程中發生錯誤: {e}")
+            logger.error(f"備份任務發生錯誤: {e}")
 
         finally:
             # 斷開遠端資料夾連線，並在獨立執行緒中執行以避免阻塞主線程
