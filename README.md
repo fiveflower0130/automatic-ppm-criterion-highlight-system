@@ -144,7 +144,7 @@ EMAIL_PORT=25
 
 # 檔案路徑設定
 PPM_FILE_NAME=ppm_criteria_limit.xlsx
-DRILL_IMG_FOLDER=D:\drill_map_backup
+BACKUP_DEST_PATH=D:\drill_map_backup
 
 # AI 服務設定
 AI_SERVICE_HOST=localhost
