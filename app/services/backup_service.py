@@ -201,6 +201,7 @@ class BackupProcessor:
 
                         # 確認檔案內容是否需要更新到資料庫
                         if not file_info:
+                            logger.warning(f"Skipping invalid file name format, cannot parse: {file}")
                             continue
 
                         if file_info["target_panel"] != "Target":
