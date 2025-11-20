@@ -8,9 +8,14 @@ DATABASE_URL = (
     f"@{Config.MYSQL_HOST}:{Config.MYSQL_PORT}/{Config.MYSQL_DB}"
 )
 
-engine = create_async_engine(DATABASE_URL, echo=False, future=True)
+engine = create_async_engine(
+    DATABASE_URL, 
+    echo=False, 
+    future=True
+)
+
 async_session_ = sessionmaker(
-    engine, expire_on_commit=False, class_=AsyncSession
+    bind=engine, expire_on_commit=False, class_=AsyncSession
 )
 mysql_base = declarative_base()
 
