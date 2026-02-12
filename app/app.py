@@ -66,11 +66,11 @@ async def run_backup_process():
 async def startup_event():
     """啟動排程器並加入任務"""
     # 系統啟動時觸發第一次執行(只有測時時用)
-    asyncio.create_task(run_tqm_process())
-    # asyncio.create_task(run_backup_process()) 
+    # asyncio.create_task(run_tqm_process())
+    asyncio.create_task(run_backup_process()) 
 
     # 後續的定時任務
-    scheduler.add_job(run_tqm_process, 'interval', minutes=10) # 10分鐘跑一次
+    # scheduler.add_job(run_tqm_process, 'interval', minutes=10) # 10分鐘跑一次
     scheduler.add_job(run_backup_process, 'cron', minute=0) # 1小時跑一次
     scheduler.start()
     print(f"Scheduler started at {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
