@@ -335,13 +335,33 @@ pytest app/tests/ -v
 # Backup Service 測試
 pytest app/tests/services/test_backup_service.py -v
 
+# TQM Service 測試
+pytest app/tests/services/test_tqm_service.py -v
+
+# Drill CRUD 測試
+pytest app/tests/crud/test_drill.py -v
+
+# Feedback CRUD 測試
+pytest app/tests/crud/test_feedback.py -v
+
+# User CRUD 測試
+pytest app/tests/crud/test_user.py -v
+
+# Config 測試
+pytest app/tests/test_config.py -v
+
 # 生成 HTML 測試報告
 pytest app/tests/services/test_backup_service.py --html=test_report.html --self-contained-html
 ```
 
+### 生成 HTML 測試報告
+```bash
+pytest app/tests/ -v --html=test_report_full.html --self-contained-html
+```
+
 ### 測試覆蓋率分析
 ```bash
-python analyze_coverage.py
+pytest app/tests/ -v --cov=app --cov-report=html
 ```
 
 ## 貢獻指南
