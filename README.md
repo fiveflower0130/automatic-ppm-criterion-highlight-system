@@ -349,9 +349,6 @@ pytest app/tests/crud/test_user.py -v
 
 # Config 測試
 pytest app/tests/test_config.py -v
-
-# 生成 HTML 測試報告
-pytest app/tests/services/test_backup_service.py --html=test_report.html --self-contained-html
 ```
 
 ### 生成 HTML 測試報告
