@@ -193,7 +193,7 @@ class BackupProcessor:
                             self.__copied_count += 1
                             ic(f"已備份檔案: {dest_path}")
                         except Exception as e:
-                            logger.error(f"Failed to copy file {remote_path} to {dest_path}: {e}")
+                            logger.error(f"無法複製檔案 {remote_path} 到 {dest_path}: {e}")
                             continue
 
                         # 解析檔案名稱
@@ -201,11 +201,11 @@ class BackupProcessor:
 
                         # 確認檔案內容是否需要更新到資料庫
                         if not file_info:
-                            logger.warning(f"Skipping invalid file name format, cannot parse: {file}")
+                            logger.warning(f"無法解析檔案名稱: {file}，跳過此檔案的DB寫入")
                             continue
 
                         if file_info["target_panel"] != "Target":
-                            logger.warning(f"Skipping non-Target file: {file}")
+                            logger.warning(f"跳過非Target檔案: {file} 的DB寫入")
                             continue
 
                         # 抓取欲更新資料進行比對
